@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === 'development') {
   }
 
 
-const DB = 'mongodb://localhost:27017/FromMongoose'
+const DB = process.env.MONGODB_ATLAS_CONN_STR
 mongoose.connect(DB)
     .then(con=>{
         console.log("connected to mongoDB")
