@@ -15,4 +15,10 @@ const getAllFaculty = catchAsync(async (req, res, next) => {
     res.status(200).json(prof);
 })
 
-module.exports = { getAllFaculty }
+const getprofInfo = catchAsync(async(req,res,next)=>{
+    const uniqueID = req.params.uniqueID
+    const prof = await profmodel.prof.findOne({uniqueID})
+    res.status(200).json(prof)
+})
+
+module.exports = { getAllFaculty , getprofInfo}

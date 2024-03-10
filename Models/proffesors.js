@@ -11,7 +11,20 @@ const profSchema = new mongoose.Schema({
     contact:String,
     address:String,
     research:[String],
-    projects : [Object]
+    projects : [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref:'Project'
+        }
+    ]
+})
+
+profSchema.pre(/^find/,function(next){
+    this.populate({
+        path:'projects',
+        select: '-__v'
+    })
+    next()
 })
 
 const prof = mongoose.model('prof',profSchema)

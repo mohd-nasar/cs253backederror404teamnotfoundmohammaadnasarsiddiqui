@@ -6,7 +6,12 @@ const router = express.Router()
 
 router 
     .route('/')
-    .get(userauthController.protect,facultyController.getAllFaculty)
+    .get(facultyController.getAllFaculty)
     
+router 
+    .route('/:uniqueID')
+    .get(facultyController.getprofInfo)    
+
+        
 
 module.exports = router;    

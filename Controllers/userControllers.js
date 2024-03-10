@@ -1,5 +1,6 @@
 const userModel = require('./../Models/usermodels')
 const projectModel = require('./../Models/projects')
+const catchAsync = require('../utils/catchAsync')
 
 const createUser = async (req, res) => {
     try {
@@ -21,10 +22,20 @@ const createUser = async (req, res) => {
     }    
 }
 
-const requestProject = async (req,res)=>{
-    // const requestedprojectid = req.params.projectid
-    // const requestedproject = projectModel.Project.find({_id : requestedprojectid})
-    //MIddleware use karo user lao project lao aur fir dono ki list me changes karo
-}  
+
+const requestProject = catchAsync(async (req,res,next)=>{
+    //used the middleware userinfo.js
+    const selectedproject = await projectModel.Project.findById(req.params.projectID)
+    const logginedstudent = req.logginedstudent
+    logginedstudent.projectsRequested.push(selectedproject._id)
+    selectedproject.studentsRequested.push(logginedstudent._id)
+    await userModel.User.findByIdAndUpdate(logginedstudent._id, {
+        $set: { projectsRequested: logginedstudent.projectsRequested.map(String) }
+    });
+    await selectedproject.save()
+    res.status(201).json({
+        message: "Successfully requested"
+    })
+})  
 
 module.exports = {createUser,requestProject}

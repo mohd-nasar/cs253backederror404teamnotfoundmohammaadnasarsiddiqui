@@ -9,16 +9,18 @@ const professorRoutes = require('./Routes/professorRoutes')
 const getProfInfo = require('./Middleware/professor')
 const AppError = require('./utils/appError')
 const errorHandler = require('./Controllers/errorController')
+const cors = require ('cors')
 
 
 app = express()
+app.use(cors())
 app.use(express.json())
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
   }
 
 
-const DB = 'mongodb://localhost:27017/FromMongoose'
+const DB = process.env.MONGODB_ATLAS_CONN_STR
 mongoose.connect(DB)
     .then(con=>{
         console.log("connected to mongoDB")
@@ -27,9 +29,8 @@ mongoose.connect(DB)
         console.log(`error connecting to db ${err}`)
     })
 
-
-app.use('/api/user/faculty',facultyRoutes)  
 app.use('/api/user',userRoutes)
+app.use('/api/user/faculty',facultyRoutes) 
 app.use('/api/professor/:uniqueID',getProfInfo)  
 app.use('/api/professor/:uniqueID/createproject',professorRoutes)
 app.all('*', (req, res, next) => {
