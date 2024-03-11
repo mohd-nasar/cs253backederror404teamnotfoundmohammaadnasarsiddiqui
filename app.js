@@ -29,6 +29,11 @@ mongoose.connect(DB)
         console.log(`error connecting to db ${err}`)
     })
 
+app.get('/',(req,res)=>{
+    res.status(200).json({
+        message: "Apis is hosted and working , fronetend banao jaldi,"
+    })
+})
 app.use('/api/user',userRoutes)
 app.use('/api/user/faculty',facultyRoutes) 
 app.use('/api/professor/:uniqueID',getProfInfo)  
