@@ -17,7 +17,7 @@ const projectSchema = new mongoose.Schema({
         type: Number
     },
     resumerequired : {
-        type : bool,
+        type : Boolean,
         required : true
     },
     maxstudents : {
