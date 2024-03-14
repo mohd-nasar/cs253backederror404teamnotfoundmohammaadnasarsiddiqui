@@ -22,3 +22,4 @@ const getprofInfo = catchAsync(async(req,res,next)=>{
 })
 
 module.exports = { getAllFaculty , getprofInfo}
+

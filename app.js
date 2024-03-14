@@ -30,8 +30,9 @@ mongoose.connect(DB)
     })
 
 app.use('/api/user',userRoutes)
+
 app.use('/api/user/faculty',facultyRoutes) 
-app.use('/api/professor/:uniqueID',getProfInfo)  
+app.use('/api/professor/:uniqueID',getProfInfo) //Middleware 
 app.use('/api/professor/:uniqueID/createproject',professorRoutes)
 app.all('*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
