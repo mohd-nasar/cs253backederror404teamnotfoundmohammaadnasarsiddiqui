@@ -9,6 +9,12 @@ const createProject = catchAsync(async (req, res,next) => {
     const newProject = await projectModel.Project.create({
         name: req.body.name,
         description : req.body.description,
+        prereg : req.body.prereg,
+        openfor : req.body.openfor,
+        resumerequired : req.body.resumerequired ,
+        maxstudents : req.body.maxstudents,
+        cpirequired : req.body.cpirequired,
+        projectCategory : req.body.projectCategory,
         offeredByProf : selectedprof._id
     })
     selectedprof.projects.push(newProject._id.toString())

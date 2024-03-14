@@ -6,7 +6,7 @@ const projectSchema = new mongoose.Schema({
         type : String,
         required : true
     },
-    desciption : {
+    description : {
         type: String, 
         required : true  
     },
@@ -17,7 +17,7 @@ const projectSchema = new mongoose.Schema({
         type: Number
     },
     resumerequired : {
-        type : bool,
+        type : Boolean,
         required : true
     },
     maxstudents : {
