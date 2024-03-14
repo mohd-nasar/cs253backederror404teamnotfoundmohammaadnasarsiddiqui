@@ -4,10 +4,33 @@ const profModel = require('./proffesors')
 const projectSchema = new mongoose.Schema({
     name:{
         type : String,
+        required : true
     },
     desciption : {
-        type: String,  
+        type: String, 
+        required : true  
     },
+    prereg : {
+        type : [String]
+    },
+    openfor:{
+        type: Number
+    },
+    resumerequired : {
+        type : bool,
+        required : true
+    },
+    maxstudents : {
+        type : Number,
+        required : true
+    },
+    cpirequired : {
+        type : Number
+    },
+    projectCategory : {
+         type  : String
+    },
+
     offeredByProf : {
         type : mongoose.Schema.ObjectId,
         ref: 'profs'
@@ -27,9 +50,6 @@ const projectSchema = new mongoose.Schema({
         }
     ]
 })
-
-
-
 
 const Project = new mongoose.model('Project',projectSchema)
 
