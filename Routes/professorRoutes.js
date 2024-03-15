@@ -18,6 +18,10 @@ router
     .post(getprofInfo,profController.createProject)
 
 router
+    .route('deleteproject/:projectid')
+    .delete(profController.deleteproject)    
+
+router
     .route('/approveproject/:projectid/:rollno')  
     .get(getprojectInfo,profController.approveproject) 
 

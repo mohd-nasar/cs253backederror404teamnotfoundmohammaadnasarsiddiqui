@@ -23,7 +23,6 @@ const createProject = catchAsync(async (req, res,next) => {
         })
     console.log(selectedprof.projects);
     res.status(201).json(newProject)
-
 })
 
 const approveproject = catchAsync(async(req,res,next)=>{
@@ -79,4 +78,15 @@ const rejectproject = catchAsync(async(req,res,next)=>{
         
 })
 
-module.exports = { createProject, approveproject,rejectproject }
+const deleteproject = catchAsync(async(req,res,next)=>{
+    const deletedUser = await User.findByIdAndDelete(req.params.projectid);
+        
+        if (!deletedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Respond with a success message
+        return res.status(201).json({ message: "User deleted successfully", deletedUser });
+})
+
+module.exports = { createProject, approveproject,rejectproject, deleteproject }

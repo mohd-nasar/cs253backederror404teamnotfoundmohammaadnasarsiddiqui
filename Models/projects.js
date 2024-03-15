@@ -11,21 +11,21 @@ const projectSchema = new mongoose.Schema({
         required : true  
     },
     prereg : {
-        type : [String]
+        type : String
     },
     openfor:{
-        type: Number
+        type: String
     },
     resumerequired : {
-        type : Boolean,
+        type : String,
         required : true
     },
     maxstudents : {
-        type : Number,
+        type : String,
         required : true
     },
     cpirequired : {
-        type : Number
+        type : String
     },
     projectCategory : {
          type  : String
