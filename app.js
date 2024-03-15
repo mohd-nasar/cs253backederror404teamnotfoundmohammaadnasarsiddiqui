@@ -51,6 +51,4 @@ app.listen(port,()=>{
     console.log(`App running on http://localhost:${port}`)
 })
 
-const app = {
-    console.log("Eating 5  star and do nothing !!!")
-}
+
