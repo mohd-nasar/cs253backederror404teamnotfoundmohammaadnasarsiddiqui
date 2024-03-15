@@ -1,7 +1,7 @@
 const projectModel = require('./../Models/projects')
 const profModel = require('./../Models/proffesors')
+const userModel = require('./../Models/usermodels')
 const catchAsync = require('../utils/catchAsync')
-
 
 const createProject = catchAsync(async (req, res,next) => {
     const selectedprof = await req.selectedprof
@@ -26,4 +26,57 @@ const createProject = catchAsync(async (req, res,next) => {
 
 })
 
-module.exports = { createProject }
+const approveproject = catchAsync(async(req,res,next)=>{
+    // const selectedprof =  await req.selectedprof
+    const selectedstudent = await userModel.User.findOne({rollno:req.params.rollno})
+    const selectedproject = await req.selectedproject
+    if (selectedstudent._id in selectedproject.studentsRequested){
+        selectedproject.studentsRequested = selectedproject.studentsRequested.filter(item => !item.equals(selectedstudent._id))
+        selectedproject.studentsEnrolled.push(selectedstudent._id)
+        await projectModel.Project.findByIdAndUpdate(selectedproject._id,{
+            $set : {
+                studentsEnrolled : selectedproject.studentsEnrolled, 
+                studentsRequested : selectedproject.studentsRequested    
+            }
+        })
+        res.status(201).json({
+            status : "success",
+            message : "Requested Approved"
+        })
+    }
+    res.status(500).json({
+        status : "fail",
+        message : "the student not requested for this project"
+    })
+    
+    // console.log(selectedstudent._id)
+        
+})
+
+const rejectproject = catchAsync(async(req,res,next)=>{
+    const selectedstudent = await userModel.User.findOne({rollno:req.params.rollno})
+    const selectedproject = await req.selectedproject
+    if (selectedstudent._id in selectedproject.studentsRequested){
+        selectedproject.studentsRequested = selectedproject.studentsRequested.filter(item => !item.equals(selectedstudent._id))
+        // selectedproject.studentsEnrolled.push(selectedstudent._id)
+        await projectModel.Project.findByIdAndUpdate(selectedproject._id,{
+            $set : {
+                // studentsEnrolled : selectedproject.studentsEnrolled, 
+                studentsRequested : selectedproject.studentsRequested    
+            }
+        })
+        res.status(201).json({
+            status : "success",
+            message : "Students removed"
+        })
+    }
+    res.status(500).json({
+        status : "fail",
+        message : "the student not requested for this project"
+    })
+        
+    // console.log(selectedstudent._id)
+        
+})
+
+module.exports = { createProject, approveproject,rejectproject }

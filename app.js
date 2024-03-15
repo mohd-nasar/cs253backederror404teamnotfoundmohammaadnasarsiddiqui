@@ -29,11 +29,17 @@ mongoose.connect(DB)
         console.log(`error connecting to db ${err}`)
     })
 
+app.get('/',(req,res)=>{
+    res.status(200).json({
+        message: "Apis is hosted and working , fronetend banao jaldi,"
+    })
+})
 app.use('/api/user',userRoutes)
+app.use('/api/user/faculty',facultyRoutes)
+app.use('/api/professor',professorRoutes) 
+// app.use('/api/professor/:uniqueID',getProfInfo) //Middleware 
+// app.use('/api/professor/:uniqueID/createproject',professorRoutes)
 
-app.use('/api/user/faculty',facultyRoutes) 
-app.use('/api/professor/:uniqueID',getProfInfo) //Middleware 
-app.use('/api/professor/:uniqueID/createproject',professorRoutes)
 app.all('*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 })
@@ -44,3 +50,7 @@ const port = process.env.port
 app.listen(port,()=>{
     console.log(`App running on http://localhost:${port}`)
 })
+
+const app = {
+    console.log("Eating 5  star and do nothing !!!")
+}

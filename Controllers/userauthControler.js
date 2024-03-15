@@ -1,5 +1,6 @@
 const util = require('util')
 const userModel = require('./../Models/usermodels')
+const profModel = require('./../Models/proffesors')
 const jwt = require('jsonwebtoken')
 const AppError = require('./../utils/appError')
 const catchAsync = require('../utils/catchAsync')
@@ -14,12 +15,10 @@ const signToken = id => {
 const signup = catchAsync(async (req, res, next) => {
 
     const newUser = await userModel.User.create(req.body)
-    const token = signToken(newUser._id)
-
+    // const token = signToken(newUser._id)
     console.log(newUser)
     res.status(201).json({
         status: "success",
-        token,
         data: newUser
     })
     
@@ -35,14 +34,33 @@ const login = catchAsync(async (req, res, next) => {
     if (!user || !(await user.checkPassword(password, user.password))) {
        return next(new AppError('Incorrect email and/or password , Try SignIN?',400))
     }
-    const token = signToken(user._id)
+    // const token = signToken(user._id)
     res.status(200).json({
         status: 'success',
-        token,
         user
     })
     
 })
+
+const proflogin = catchAsync(async (req, res, next) => {
+    const { email} = req.body
+    console.log(email)
+    if (!email) {
+        return next(new AppError('Incorrect Email .New Prof ? ask admin to sign you up', 404))
+    }
+    const prof = await profModel.prof.findOne({ email })
+    console.log(prof)
+    if (!prof) {
+       return next(new AppError('Incorrect email and/or password , Try SignIN?',400))
+    }
+    // const token = signToken(user._id)
+    res.status(200).json({
+        status: 'success',
+        prof
+    })
+    
+})
+
 
 const protect = catchAsync(async(req,res,next)=>{
     let token
@@ -62,4 +80,4 @@ const protect = catchAsync(async(req,res,next)=>{
     next()
 })
 
-module.exports = { signup, login ,protect}
+module.exports = { signup, login ,protect, proflogin}

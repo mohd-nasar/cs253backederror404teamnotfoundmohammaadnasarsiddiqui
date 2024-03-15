@@ -1,4 +1,5 @@
 const profmodel = require('./../Models/proffesors')
+const projectModel = require('./../Models/projects')
 const catchAsync = require('./../utils/catchAsync')
 const apiFeatures = require('./../utils/ApiFeatures')
 const appError = require('./../utils/appError')
@@ -21,5 +22,15 @@ const getprofInfo = catchAsync(async(req,res,next)=>{
     res.status(200).json(prof)
 })
 
-module.exports = { getAllFaculty , getprofInfo}
+const getallprojects = catchAsync(async(req,res,next)=>{
+    const features = new apiFeatures(projectModel.Project.find(), req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+    const projects = await features.query;
+    res.status(200).json(projects);
+})
+
+module.exports = { getAllFaculty , getprofInfo, getallprojects}
 

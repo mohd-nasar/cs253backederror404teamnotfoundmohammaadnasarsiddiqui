@@ -7,6 +7,10 @@ const router = express.Router()
 router 
     .route('/')
     .get(facultyController.getAllFaculty)
+
+router 
+    .route('/projects')
+    .get(facultyController.getallprojects)    
     
 router 
     .route('/:uniqueID')
