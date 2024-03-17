@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const slugify = require('slugify')
 const validator = require('validator')
 const bcryptjs = require('bcryptjs')
+const crypto = require('crypto')
 
 const userSchema = new mongoose.Schema({
     name : {
@@ -41,12 +42,17 @@ const userSchema = new mongoose.Schema({
         }
 
     },
+    passwordChangedAt : {
+        type : Date
+    },
     projectsEnrolled : {
         type : [Object]
     },
     projectsRequested : {
         type : [Object]
-    }
+    },
+    passwordResetToken : String,
+    passwordResetExpires : Date
 })
 
 
@@ -58,9 +64,37 @@ userSchema.pre('save',async function(next){
     this.confirmpassword = undefined
     next()
 })
+userSchema.pre('save',function(next){
+    if(!this.isModified('password') || this.isNew) {
+        return next()
+    }
+    this.passwordChangedAt = Date.now() - 1000
+    next()
+})
 
 userSchema.methods.checkPassword = async function(enteredpass,userpass){
     return await bcryptjs.compare(enteredpass,userpass)
+}
+
+userSchema.methods.changedpasswordafter = function(JWTtimestamp){
+    if(this.passwordChangedAt){
+        const changedTimeStamp = parseInt(
+            this.passwordChangedAt.getTime()/1000,
+            10
+        )
+        return JWTtimestamp < changedTimeStamp
+    }
+    return false;
+}
+
+userSchema.methods.createPasswordResetToken = function(){
+    const resetToken = crypto.randomBytes(32).toString('hex')
+    this.passwordResetToken = crypto.createHash('sha256')
+                                    .update(resetToken)
+                                    .digest('hex')
+
+    this.passwordResetExpires = Date.now() * 10 * 60 * 1000
+    return resetToken
 }
 
 const User = mongoose.model('User',userSchema)

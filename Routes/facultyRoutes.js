@@ -16,6 +16,5 @@ router
     .route('/:uniqueID')
     .get(facultyController.getprofInfo)    
 
-        
-
+    
 module.exports = router;    

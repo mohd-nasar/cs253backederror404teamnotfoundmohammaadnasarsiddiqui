@@ -8,6 +8,10 @@ const getuserinfo = require('./../Middleware/uerinfo')
 router.post('/signup',userauthController.signup)
 router.post('/login',userauthController.login)
 
+router.post('/resetPassword/:token',userauthController.resetPassword)
+router.post('/forgotPassowrd',userauthController.forgotPassword)
+router.patch('/updatePassword',userauthController.updatePassword)
+
 // router
     // .route('/')
     // .post(userController.createUser)
