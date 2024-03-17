@@ -218,12 +218,12 @@ const sendotp = catchAsync(async (req,res,next)=>{
       message : `Hello i am Mohd Nasar Siddiqui , director of Centralised Project Integration ,Your otp for signup is ${otpValue}`
 
     });
-    res.status(800).json({
+    res.status(201).json({
       message : "success",
       otp : `${otpValue}`
     })
   }catch{
-    res.status(801).json({
+    res.status(404).json({
       meassge : "Email not send "
     })
   }
