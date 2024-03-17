@@ -42,6 +42,14 @@ const userSchema = new mongoose.Schema({
         }
 
     },
+    cpi : {
+        type : Number,
+        required : true
+    },
+    resumeLink : {
+        type : String,
+        required : true
+    },
     passwordChangedAt : {
         type : Date
     },

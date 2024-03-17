@@ -7,6 +7,7 @@ const getuserinfo = require('./../Middleware/uerinfo')
 
 router.post('/signup',userauthController.signup)
 router.post('/login',userauthController.login)
+router.post('/email',userauthController.sendotp)
 
 router.post('/resetPassword/:token',userauthController.resetPassword)
 router.post('/forgotPassowrd',userauthController.forgotPassword)

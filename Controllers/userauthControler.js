@@ -6,6 +6,7 @@ const AppError = require('./../utils/appError')
 const catchAsync = require('../utils/catchAsync')
 const sendEmail = require('./../utils/email')
 const crypto = require('crypto')
+const { createSearchParams } = require('react-router-dom')
 
 
 const signToken = id => {
@@ -208,4 +209,34 @@ const updatePassword = catchAsync(async (req, res, next) => {
     createSendToken(user,200,res)
   });
 
-module.exports = { signup, login ,protect, proflogin, forgotPassword, resetPassword, updatePassword}
+const sendotp = catchAsync(async (req,res,next)=>{
+  const otpValue = Math.floor(100000 + Math.random() * 900000)
+  try{
+    await sendEmail({
+      email: req.body.email,
+      subject: 'OTP for centralized project Integration signup',
+      message : `Hello i am Mohd Nasar Siddiqui , director of Centralised Project Integration ,Your otp for signup is ${otpValue}`
+
+    });
+    res.status(800).json({
+      message : "success",
+      otp : `${otpValue}`
+    })
+  }catch{
+    res.status(801).json({
+      meassge : "Email not send "
+    })
+  }
+
+})
+
+module.exports = { 
+   signup, 
+   login ,
+   protect,
+   proflogin, 
+   forgotPassword, 
+   resetPassword, 
+   updatePassword, 
+   sendotp
+  }
