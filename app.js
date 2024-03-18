@@ -38,20 +38,6 @@ app.get('/',(req,res)=>{
 app.use('/api/user',userRoutes)
 app.use('/api/user/faculty',facultyRoutes)
 app.use('/api/professor',professorRoutes)
-// app.get('/api/user/email',async (req,res)=>{
-//     await sendEmail({
-
-//       email: 'snasar22@iitk.ac.in',
-//       subject: 'Your password reset token (valid for 10 min)',
-//       message : 'Otp is 234344'
-//     })
-//     res.json({
-//         message : "send"
-//     })
-// }) 
-// app.use('/api/professor/:uniqueID',getProfInfo) //Middleware 
-// app.use('/api/professor/:uniqueID/createproject',professorRoutes)
-
 app.all('*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 })

@@ -8,17 +8,11 @@ const getuserinfo = require('./../Middleware/uerinfo')
 router.post('/signup',userauthController.signup)
 router.post('/login',userauthController.login)
 router.post('/email',userauthController.sendotp)
-
+router.get('/getuserinfo/:id',userauthController.getAUserinfo)
 router.post('/resetPassword/:token',userauthController.resetPassword)
 router.post('/forgotPassowrd',userauthController.forgotPassword)
 router.patch('/updatePassword',userauthController.updatePassword)
+router.post('/:rollno/requestproject/:projectID',getuserinfo,userController.requestProject)
+router.get('/projectinfo/:projectid',userController.getProjectInfo)    
 
-// router
-    // .route('/')
-    // .post(userController.createUser)
-
-router
-    .route('/:rollno/requestproject/:projectID')
-    .post(getuserinfo,userController.requestProject)
-    
 module.exports = router

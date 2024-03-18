@@ -6,7 +6,7 @@ const AppError = require('./../utils/appError')
 const catchAsync = require('../utils/catchAsync')
 const sendEmail = require('./../utils/email')
 const crypto = require('crypto')
-const { createSearchParams } = require('react-router-dom')
+// const { createSearchParams } = require('react-router-dom')
 
 
 const signToken = id => {
@@ -26,7 +26,6 @@ const createSendToken = (user, statusCode, res) => {
     if (process.env.NODE_ENV === 'production') cookieOptions.secure = true
   
     res.cookie('jwt', token, cookieOptions)
-  
     // Remove password from output
     user.password = undefined
   
@@ -40,17 +39,13 @@ const createSendToken = (user, statusCode, res) => {
   }
 
 const signup = catchAsync(async (req, res, next) => {
-
+    if(await userModel.User.findOne({email : req.body.email})){
+      res.status(401).json({
+        message : "signup Fail, Email already in use",
+      })
+    }
     const newUser = await userModel.User.create(req.body)
-    // const token = signToken(newUser._id)
-    // console.log(newUser)
-    createSendToken(newUser,201,res)
-    // res.status(201).json({
-    //     status: "success",
-    //     token,
-    //     data: newUser
-    // })
-    
+    createSendToken(newUser,201,res)   
 })
 
 const login = catchAsync(async (req, res, next) => {
@@ -63,12 +58,6 @@ const login = catchAsync(async (req, res, next) => {
     if (!user || !(await user.checkPassword(password, user.password))) {
        return next(new AppError('Incorrect email and/or password , Try SignIN?',400))
     }
-    // const token = signToken(user._id)
-    // res.status(200).json({
-    //     status: 'success',
-    //     token,
-    //     user
-    // })
     createSendToken(user,200,res)
     
 })
@@ -84,12 +73,6 @@ const proflogin = catchAsync(async (req, res, next) => {
     if (!prof) {
        return next(new AppError('Incorrect email and/or password , Try SignIN?',400))
     }
-    // const token = signToken(user._id)
-    // res.status(200).json({
-    //     status: 'success',
-    //     token,
-    //     prof
-    // })
     createSendToken(prof,200,res)
 })
 
@@ -229,6 +212,13 @@ const sendotp = catchAsync(async (req,res,next)=>{
   }
 
 })
+const getAUserinfo = catchAsync (async (req,res,next)=>{
+    const user = await userModel.User.findById(req.params.id)
+    res.status(201).json({
+      message : 'success',
+      user
+    })
+})
 
 module.exports = { 
    signup, 
@@ -238,5 +228,6 @@ module.exports = {
    forgotPassword, 
    resetPassword, 
    updatePassword, 
-   sendotp
+   sendotp,
+   getAUserinfo
   }
