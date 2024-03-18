@@ -6,6 +6,7 @@ const AppError = require('./../utils/appError')
 const catchAsync = require('../utils/catchAsync')
 const sendEmail = require('./../utils/email')
 const crypto = require('crypto')
+const { reset } = require('nodemon')
 // const { createSearchParams } = require('react-router-dom')
 
 
@@ -103,18 +104,28 @@ const protect = catchAsync(async(req,res,next)=>{
 })
 
 const forgotPassword = catchAsync(async (req,res,next)=>{
-    const user = userModel.User.findOne({email:req.body.email})
+    const user = await userModel.User.findOne({email:req.body.email})
+    console.log(user)
     if(!user){
         return next(new AppError('User with this email not found',404))
     }
-    const resetToken = createPasswordResetToken()
-    await user.save({validateBeforeSave : false})
+    const resetToken = user.createPasswordResetToken()
+
+    console.log("token saved to database is ")
+    console.log(resetToken)
+    await userModel.User.findOneAndUpdate(
+      { email: req.body.email },
+      {
+        passwordResetToken: resetToken,
+        passwordResetExpires: Date.now() + 10 * 60 * 1000, // 10 minutes
+      }// Return the updated document
+    )
+
     const resetURL = `${req.protocol}://${req.get(
     'host'
   )}/api/user/resetPassword/${resetToken}`;
 
   const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
-
   try {
     await sendEmail({
       email: user.email,
@@ -145,29 +156,24 @@ const resetPassword = catchAsync(async (req, res, next) => {
     const hashedToken = crypto
       .createHash('sha256')
       .update(req.params.token)
-      .digest('hex');
+      .digest('hex')
   
     const user = await userModel.User.findOne({
-      passwordResetToken: hashedToken,
+      passwordResetToken: req.params.token,
       passwordResetExpires: { $gt: Date.now() }
-    });
+    })
   
     // 2) If token has not expired, and there is user, set the new password
     if (!user) {
-      return next(new AppError('Token is invalid or has expired', 400));
+      return next(new AppError('Token is invalid or has expired', 400))
     }
-    user.password = req.body.password;
-    user.confirmpassword = req.body.confirmpassword;
-    user.passwordResetToken = undefined;
+    user.password = req.body.password
+    user.confirmpassword = req.body.confirmpassword
+    user.passwordResetToken = undefined
     user.passwordResetExpires = undefined;
-    await user.save();
-    // const token = signToken(user._id)
-    // res.status(200).json({
-    //     status: 'success',
-    //     token
-    // })
+    await user.save()
     createSendToken(user,200,res)
-  });
+  })
   
 const updatePassword = catchAsync(async (req, res, next) => {
     // 1) Get user from collection
@@ -182,13 +188,6 @@ const updatePassword = catchAsync(async (req, res, next) => {
     user.password = req.body.password;
     user.confirmpassword = req.body.confirmpassword;
     await user.save()
-  
-    // 4) Log user in, send JWT
-    // const token = signToken(user._id)
-    // res.status(200).json({
-    //     status: 'success',
-    //     token
-    // })
     createSendToken(user,200,res)
   });
 
@@ -198,7 +197,7 @@ const sendotp = catchAsync(async (req,res,next)=>{
     await sendEmail({
       email: req.body.email,
       subject: 'OTP for centralized project Integration signup',
-      message : `Hello i am Mohd Nasar Siddiqui , director of Centralised Project Integration ,Your otp for signup is ${otpValue}`
+      message : `Enter the otp to signup in Centralised Project Integration ${otpValue}`
 
     });
     res.status(201).json({

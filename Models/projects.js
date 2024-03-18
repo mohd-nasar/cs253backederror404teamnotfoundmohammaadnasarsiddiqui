@@ -51,6 +51,22 @@ const projectSchema = new mongoose.Schema({
     ]
 })
 
+// projectSchema.pre(/^find/,function(next){
+//     this.populate({
+//         path:'studentsRequested',
+//         select: '-__v'
+//     })
+//     next()
+// })
+
+// projectSchema.pre(/^find/,function(next){
+//     this.populate({
+//         path:'studentsEnrolled',
+//         select: '-__v'
+//     })
+//     next()
+// })
+
 const Project = new mongoose.model('Project',projectSchema)
 
 module.exports = {Project}
