@@ -80,14 +80,14 @@ const rejectproject = catchAsync(async(req,res,next)=>{
 })
 
 const deleteproject = catchAsync(async(req,res,next)=>{
-    const deletedUser = await User.findByIdAndDelete(req.params.projectid);
+    const deletedProject = await projectModel.Project.findByIdAndDelete(req.params.projectid);
         
-        if (!deletedUser) {
-            return res.status(404).json({ message: "User not found" });
+        if (!deletedProject) {
+            return res.status(404).json({ message: "Project not found" });
         }
 
         // Respond with a success message
-        return res.status(201).json({ message: "User deleted successfully", deletedUser });
+        return res.status(201).json({ message: "Project deleted successfully", deletedProject });
 })
 
 module.exports = { createProject, approveproject,rejectproject, deleteproject }

@@ -18,7 +18,7 @@ router
     .post(getprofInfo,profController.createProject)
 
 router
-    .route('deleteproject/:projectid')
+    .route('/deleteproject/:projectid')
     .delete(profController.deleteproject)    
 
 router
