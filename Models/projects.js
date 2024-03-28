@@ -32,17 +32,14 @@ const projectSchema = new mongoose.Schema({
     },
 
     offeredByProf : {
-        type : mongoose.Schema.ObjectId,
-        ref: 'profs'
+        type : Object
     },
-    studentsEnrolled : {
-        type: [
-            {
-                type : mongoose.Schema.ObjectId,
-                ref : 'users'
-            }
-        ]
-    },
+    studentsEnrolled : [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref:'User'
+        }
+    ],
     studentsRequested : [
         {
             type: mongoose.Schema.ObjectId,
@@ -50,22 +47,6 @@ const projectSchema = new mongoose.Schema({
         }
     ]
 })
-
-// projectSchema.pre(/^find/,function(next){
-//     this.populate({
-//         path:'studentsRequested',
-//         select: '-__v'
-//     })
-//     next()
-// })
-
-// projectSchema.pre(/^find/,function(next){
-//     this.populate({
-//         path:'studentsEnrolled',
-//         select: '-__v'
-//     })
-//     next()
-// })
 
 const Project = new mongoose.model('Project',projectSchema)
 
