@@ -135,7 +135,8 @@ const forgotPassword = catchAsync(async (req,res,next)=>{
 
     res.status(200).json({
       status: 'success',
-      message: 'Token sent to email!'
+      message: 'Token sent to email!',
+      resetToken
     });
   } catch (err) {
     user.passwordResetToken = undefined;
@@ -172,6 +173,7 @@ const resetPassword = catchAsync(async (req, res, next) => {
     user.passwordResetToken = undefined
     user.passwordResetExpires = undefined;
     await user.save()
+
     createSendToken(user,200,res)
   })
   
