@@ -35,7 +35,15 @@ const requestProject = catchAsync(async (req,res,next)=>{
     await selectedproject.save()
     res.status(201).json({
         message: "Successfully requested"
-    })
+    }) 
 })  
 
-module.exports = {createUser,requestProject}
+const getProjectInfo =  catchAsync(async(req,res,next)=>{
+    const project = await projectModel.Project.findById(req.params.projectid)
+    res.status(201).json({
+        message : "success",
+        project
+    })
+})
+
+module.exports = {createUser,requestProject, getProjectInfo}
