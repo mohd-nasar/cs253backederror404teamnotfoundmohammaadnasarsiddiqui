@@ -53,12 +53,24 @@ const userSchema = new mongoose.Schema({
     passwordChangedAt : {
         type : Date
     },
-    projectsEnrolled : {
-        type : [Object]
-    },
-    projectsRequested : {
-        type : [Object]
-    },
+    projectsEnrolled : [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref:'Project'
+        }
+    ],
+    projectsRequested :[
+        {
+            type: mongoose.Schema.ObjectId,
+            ref:'Project'
+        }
+    ],
+    projectsRejected : [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref:'Project'
+        }
+    ],
     passwordResetToken : String,
     passwordResetExpires : Date
 })
@@ -108,8 +120,30 @@ userSchema.methods.createPasswordResetToken = function() {
   
     return resetToken;
   };
+userSchema.pre(/^find/,function(next){
+    this.populate({
+        path:'projectsRequested',
+        select: ' _id name offeredByProf description'
+    })
+    next()
+})
 
+userSchema.pre(/^find/,function(next){
+    this.populate({
+        path:'projectsEnrolled',
+        select: ' _id name offeredByProf description'
+    })
+    next()
+})
 
+userSchema.pre(/^find/,function(next){
+    this.populate({
+        path:'projectsRejected',
+        select: ' _id name offeredByProf description'
+    })
+    next()
+})
+  
 const User = mongoose.model('User',userSchema)
 
 module.exports = {User}
