@@ -23,35 +23,49 @@ const createUser = async (req, res) => {
 }
 
 
-const requestProject = catchAsync(async (req,res,next)=>{
-    //used the middleware userinfo.js
-    const selectedproject = await projectModel.Project.findById(req.params.projectID)
-    const logginedstudent = req.logginedstudent
-    if(logginedstudent.projectsRequested.includes(selectedproject._id)){
-        res.status(400).json({
-            message : "Request pending for this project"
-        })
+const requestProject = catchAsync(async (req, res, next) => {
+    const selectedproject = await projectModel.Project.findById(req.params.projectID);
+    console.log(selectedproject);
+    const logginedstudent = req.logginedstudent;
+    console.log(logginedstudent);
+
+    if (logginedstudent.projectsRequested.includes(selectedproject._id)) {
+        return res.status(400).json({
+            message: "Request pending for this project"
+        });
     }
-    if(logginedstudent.projectsEnrolled.includes(selectedproject._id)){
-        res.status(400).json({
-            message : "Already Enrolled for this project"
-        })
+    if (logginedstudent.projectsEnrolled.includes(selectedproject._id)) {
+        return res.status(400).json({
+            message: "Already Enrolled for this project"
+        });
     }
-    if(logginedstudent.projectsRejected.includes(selectedproject._id)){
-        res.status(400).json({
-            message : "This project is rejected by professor"
-        })
+    if (logginedstudent.projectsRejected.includes(selectedproject._id)) {
+        return res.status(400).json({
+            message: "This project is rejected by professor"
+        });
     }
-    logginedstudent.projectsRequested.push(selectedproject._id)
-    selectedproject.studentsRequested.push(logginedstudent._id)
+
+    // Check if the student has already requested this project
+    if (selectedproject.studentsRequested.includes(logginedstudent._id)) {
+        return res.status(400).json({
+            message: "You have already requested this project"
+        });
+    }
+
+    logginedstudent.projectsRequested.push(selectedproject._id);
+    selectedproject.studentsRequested.push(logginedstudent._id);
+
     await userModel.User.findByIdAndUpdate(logginedstudent._id, {
         $set: { projectsRequested: logginedstudent.projectsRequested }
     });
-    await selectedproject.save()
+
+    await selectedproject.save();
+
     res.status(201).json({
         message: "Successfully requested"
-    }) 
-})  
+    });
+});
+
 
 const getProjectInfo =  catchAsync(async(req,res,next)=>{
     const project = await projectModel.Project.findById(req.params.projectid)

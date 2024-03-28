@@ -12,7 +12,7 @@ router.get('/getuserinfo/:id',userauthController.getAUserinfo)
 router.post('/resetpassword/:token',userauthController.resetPassword)
 router.post('/forgotpassword',userauthController.forgotPassword)
 router.patch('/updatepassword',userauthController.updatePassword)
-router.post('/:rollno/requestproject/:projectID',getuserinfo,userController.requestProject)
+router.get('/:rollno/requestproject/:projectID',getuserinfo,userController.requestProject)
 router.get('/projectinfo/:projectid',userController.getProjectInfo)    
 
 module.exports = router

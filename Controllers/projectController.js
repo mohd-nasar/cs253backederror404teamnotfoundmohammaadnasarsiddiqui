@@ -26,7 +26,7 @@ const createProject = catchAsync(async (req, res,next) => {
         offeredByProf
     })
 
-    selectedprof.projects.push(newProject._id.toString())
+    selectedprof.projects.push(newProject._id)
     await profModel.prof.findByIdAndUpdate(selectedprof._id, {
             $set: { projects: selectedprof.projects }
         })

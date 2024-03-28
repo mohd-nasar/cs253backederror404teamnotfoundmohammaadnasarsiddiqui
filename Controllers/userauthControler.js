@@ -121,7 +121,7 @@ const forgotPassword = catchAsync(async (req,res,next)=>{
       }// Return the updated document
     )
 
-    const resetURL = `http://localhost:3000/resetpassword/${resetToken}`;
+    const resetURL = `https://profinfocentral.vercel.app/resetpassword/${resetToken}`;
 
   const message = `Visit this url for changing the password \n ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
   try {
@@ -212,7 +212,8 @@ const sendotp = catchAsync(async (req,res,next)=>{
 
 })
 const getAUserinfo = catchAsync (async (req,res,next)=>{
-    const user = await userModel.User.findById(req.params.id)
+     const userid =  req.params.id
+    const user = await userModel.User.findById(userid)
     res.status(201).json({
       message : 'success',
       user
