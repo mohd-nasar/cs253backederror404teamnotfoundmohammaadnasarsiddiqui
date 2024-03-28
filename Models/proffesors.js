@@ -19,13 +19,13 @@ const profSchema = new mongoose.Schema({
     ]
 })
 
-// profSchema.pre(/^find/,function(next){
-//     this.populate({
-//         path:'projects',
-//         select: '-__v -studentsRequested -studentsRejected -studentsEnrolled'
-//     })
-//     next()
-// })
+profSchema.pre(/^find/,function(next){
+    this.populate({
+        path:'projects',
+        select: '-__v -studentsRequested -studentsRejected -studentsEnrolled'
+    })
+    next()
+})
 
 const prof = mongoose.model('prof',profSchema)
 module.exports = {prof}
