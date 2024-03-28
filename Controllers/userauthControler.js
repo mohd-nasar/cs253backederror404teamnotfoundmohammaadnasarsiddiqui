@@ -121,11 +121,9 @@ const forgotPassword = catchAsync(async (req,res,next)=>{
       }// Return the updated document
     )
 
-    const resetURL = `${req.protocol}://${req.get(
-    'host'
-  )}/api/user/resetPassword/${resetToken}`;
+    const resetURL = `http://localhost:3000/resetpassword/${resetToken}`;
 
-  const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
+  const message = `Visit this url for changing the password \n ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
   try {
     await sendEmail({
       email: user.email,
