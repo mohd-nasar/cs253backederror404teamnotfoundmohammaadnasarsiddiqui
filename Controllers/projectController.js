@@ -76,7 +76,12 @@ const approveproject = catchAsync(async(req, res, next) => {
       },
     });
     
-    await selectedstudent.save();
+    await userModel.User.findByIdAndUpdate(selectedstudent._id, {
+      $set: {
+        projectsEnrolled: selectedstudent.projectsEnrolled,
+        projectsRequested: selectedstudent.projectsRequested,
+      },
+    });
     
     // Handle the response based on the condition
     if (selectedproject.studentsEnrolled.includes(selectedstudent._id)) {
