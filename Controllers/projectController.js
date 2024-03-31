@@ -126,72 +126,37 @@ const approveproject = catchAsync(async(req, res, next) => {
 //     })   
 // })
 
-// const rejectproject = catchAsync(async (req, res, next) => {
-//     const selectedStudent = await userModel.User.findOne({ rollno: req.params.rollno });
-  
-//     const projectId = req.params.projectid;
-//     const selectedProject = await projectModel.Project.findById(projectId);
-
-//     selectedProject.studentsRequested = selectedProject.studentsRequested.filter(item => !item.equals(selectedStudent._id));
-    
-//     selectedStudent.projectsRequested = selectedStudent.projectsRequested.filter(item => !item.equals(selectedProject._id));
-  
-//     selectedStudent.projectsRejected.push(selectedProject._id);
-    
-//     await projectModel.Project.findByIdAndUpdate(selectedProject._id, {
-//         $set: {
-//             studentsRequested: selectedProject.studentsRequested    
-//         }
-//     });
-
-//     await userModel.User.findByIdAndUpdate(selectedStudent._id, {
-//         $set: {
-//             projectsRequested: selectedStudent.projectsRequested,
-//             projectsRejected: selectedStudent.projectsRejected,
-//         }
-//     });
-
-//     if (selectedStudent.projectsRejected.includes(selectedProject._id)) {
-//         res.status(201).json({
-//             status: "success",
-//             message: "Request Rejected!",
-//         });
-//     } else {
-//         res.status(500).json({
-//             status: "fail",
-//             message: "The student did not request for this project",
-//         });
-//     }
-// });
-
 const rejectproject = catchAsync(async (req, res, next) => {
-  const selectedStudent = await userModel.User.findOne({ rollno: req.params.rollno });
-  const projectId = req.params.projectid;
-  const selectedProject = await projectModel.Project.findById(projectId);
+    const selectedStudent = await userModel.User.findOne({ rollno: req.params.rollno });
+  
+    const projectId = req.params.projectid;
+    const selectedProject = await projectModel.Project.findById(projectId);
 
-  const isStudentRequested = selectedProject.studentsRequested.some(item => item.equals(selectedStudent._id));
-  const isProjectRejected = selectedStudent.projectsRejected.some(item => item.equals(selectedProject._id));
+    selectedProject.studentsRequested = selectedProject.studentsRequested.filter(item => !item.equals(selectedStudent._id));
+    
+    selectedStudent.projectsRequested = selectedStudent.projectsRequested.filter(item => !item.equals(selectedProject._id));
+  
+    selectedStudent.projectsRejected.push(selectedProject._id);
+    
+    await projectModel.Project.findByIdAndUpdate(selectedProject._id, {
+        $set: {
+            studentsRequested: selectedProject.studentsRequested    
+        }
+    });
 
-  if (!isStudentRequested && isProjectRejected) {
-      selectedProject.studentsRequested = selectedProject.studentsRequested.filter(item => !item.equals(selectedStudent._id));
-      selectedStudent.projectsRequested = selectedStudent.projectsRequested.filter(item => !item.equals(selectedProject._id));
-      selectedStudent.projectsRejected.push(selectedProject._id);
+    await userModel.User.findByIdAndUpdate(selectedStudent._id, {
+        $set: {
+            projectsRequested: selectedStudent.projectsRequested,
+            projectsRejected: selectedStudent.projectsRejected,
+        }
+    });
 
-      await Promise.all([
-          projectModel.Project.findByIdAndUpdate(selectedProject._id, { $set: { studentsRequested: selectedProject.studentsRequested } }),
-          userModel.User.findByIdAndUpdate(selectedStudent._id, { $set: { projectsRequested: selectedStudent.projectsRequested, projectsRejected: selectedStudent.projectsRejected } })
-      ]);
-
-      res.status(201).json({
-          status: "success",
-          message: "Request Rejected!",
-      });
-  } else {
-      res.status(500).json({
-          status: "fail",
-          message: "The student did not request for this project",
-      });
-  }
+   
+        res.status(201).json({
+            status: "success",
+            message: "Request Rejected!",
+        });
+    
 });
 
 
