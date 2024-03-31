@@ -34,27 +34,61 @@ const createProject = catchAsync(async (req, res,next) => {
     res.status(201).json(newProject)
 })
 
+// const approveproject = catchAsync(async(req,res,next)=>{
+//     const selectedstudent = await userModel.User.findOne({rollno:req.params.rollno})
+//     const selectedproject = await req.selectedproject
+//     if (selectedstudent._id in selectedproject.studentsRequested){
+//         selectedproject.studentsRequested = selectedproject.studentsRequested.filter(item => !item.equals(selectedstudent._id))
+//         selectedproject.studentsEnrolled.push(selectedstudent._id)
+//         await projectModel.Project.findByIdAndUpdate(selectedproject._id,{
+//             $set : {
+//                 studentsEnrolled : selectedproject.studentsEnrolled, 
+//                 studentsRequested : selectedproject.studentsRequested    
+//             }
+//         })
+//         res.status(201).json({
+//             status : "success",
+//             message : "Requested Approved"
+//         })
+//     }
+//     res.status(500).json({
+//         status : "fail",
+//         message : "the student not requested for this project"
+//     })  
+// })
 const approveproject = catchAsync(async(req,res,next)=>{
-    const selectedstudent = await userModel.User.findOne({rollno:req.params.rollno})
-    const selectedproject = await req.selectedproject
-    if (selectedstudent._id in selectedproject.studentsRequested){
-        selectedproject.studentsRequested = selectedproject.studentsRequested.filter(item => !item.equals(selectedstudent._id))
-        selectedproject.studentsEnrolled.push(selectedstudent._id)
-        await projectModel.Project.findByIdAndUpdate(selectedproject._id,{
-            $set : {
-                studentsEnrolled : selectedproject.studentsEnrolled, 
-                studentsRequested : selectedproject.studentsRequested    
-            }
-        })
-        res.status(201).json({
-            status : "success",
-            message : "Requested Approved"
-        })
+    // const selectedprof =  await req.selectedprof
+    const selectedstudent = await userModel.User.findOne({ rollno: req.params.rollno });
+    const projectid = req.params.projectid;
+    const selectedproject = await projectModel.Project.findById(projectid);
+    
+    console.log(req.params.projectid);
+    
+    selectedproject.studentsRequested = selectedproject.studentsRequested.filter(item => !item.equals(selectedstudent._id));
+    selectedproject.studentsEnrolled.push(selectedstudent._id);
+    selectedstudent.projectsRequested = selectedstudent.projectsRequested.filter(item => !item.equails(selectedproject._id))
+    selectedstudent.projectsEnrolled.push(selectedstuddent._id)
+    await projectModel.Project.findByIdAndUpdate(selectedproject._id, {
+      $set: {
+        studentsEnrolled: selectedproject.studentsEnrolled,
+        studentsRequested: selectedproject.studentsRequested,
+      },
+    });
+    await selectedstudent.save()
+    
+    // Handle the response based on the condition
+    if (selectedproject.studentsEnrolled.includes(selectedstudent._id)) {
+      res.status(201).json({
+        status: "success",
+        message: "Request Approved",
+      });
+    } else {
+      res.status(500).json({
+        status: "fail",
+        message: "The student did not request for this project",
+      });
     }
-    res.status(500).json({
-        status : "fail",
-        message : "the student not requested for this project"
-    })  
+
 })
 
 const rejectproject = catchAsync(async(req,res,next)=>{
