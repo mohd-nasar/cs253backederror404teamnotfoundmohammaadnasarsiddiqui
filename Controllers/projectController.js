@@ -126,38 +126,42 @@ const approveproject = catchAsync(async(req, res, next) => {
 //     })   
 // })
 
-const rejectproject = catchAsync(async(req,res,next)=>{
-    const selectedstudent = await userModel.User.findOne({rollno:req.params.rollno})
+const rejectProject = catchAsync(async (req, res, next) => {
+    const selectedStudent = await userModel.User.findOne({ rollno: req.params.rollno });
 
-    const projectid = req.params.projectid;
-    const selectedproject = await projectModel.Project.findById(projectid);
+    const projectId = req.params.projectid;
+    const selectedProject = await projectModel.Project.findById(projectId);
 
-        selectedproject.studentsRequested = selectedproject.studentsRequested.filter(item => !item.equals(selectedstudent._id))
-        selectedstudent.projectsRequested = selectedstudent.projectsRequested.filter(item =>!item.equals(selectedproject._id))
-        selectedstudent.projectsRejected.push(selectedproject._id)
-        await projectModel.Project.findByIdAndUpdate(selectedproject._id,{
-            $set : {
-                   studentsRequested : selectedproject.studentsRequested    
-            }
-        })
-        await userModel.User.findByIdAndUpdate(selectedstudent._id,{
-            $set : {
-                projectsRequested : selectedstudent.projectReequested,
-                projectsRejected : selectedstudent.projectRejected,
-            }
-        })       
-        if (!selectedproject.studentsRequested.includes(selectedstudent._id)) {
-            res.status(201).json({
-              status: "success",
-              message: "Request Rejected!",
-            });
-          } else {
-            res.status(500).json({
-              status: "fail",
-              message: "The student did not request for this project",
-            });
-          }
-})
+    selectedProject.studentsRequested = selectedProject.studentsRequested.filter(item => !item.equals(selectedStudent._id));
+    selectedStudent.projectsRequested = selectedStudent.projectsRequested.filter(item => !item.equals(selectedProject._id));
+    selectedStudent.projectsRejected.push(selectedProject._id);
+
+    await projectModel.Project.findByIdAndUpdate(selectedProject._id, {
+        $set: {
+            studentsRequested: selectedProject.studentsRequested    
+        }
+    });
+
+    await userModel.User.findByIdAndUpdate(selectedStudent._id, {
+        $set: {
+            projectsRequested: selectedStudent.projectsRequested,
+            projectsRejected: selectedStudent.projectsRejected,
+        }
+    });
+
+    if (!selectedProject.studentsRequested.includes(selectedStudent._id) && selectedStudent.projectsRejected.includes(selectedProject._id)) {
+        res.status(201).json({
+            status: "success",
+            message: "Request Rejected!",
+        });
+    } else {
+        res.status(500).json({
+            status: "fail",
+            message: "The student did not request for this project",
+        });
+    }
+});
+
 
 const deleteproject = catchAsync(async(req,res,next)=>{
     const deletedProject = await projectModel.Project.findByIdAndDelete(req.params.projectid);  
